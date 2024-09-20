@@ -1,8 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Briefcase } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
 export default function Home() {
+  const userRole = useSelector((state) => state.auth.user?.role); // User role from Redux store
+  const isAuthenticated = useSelector((state) => state.auth?.isAuthenticated);
+
+  let dashboard;
+
+  if (isAuthenticated && userRole === "employer") {
+    dashboard = '/employer-dashboard';
+  } else if (isAuthenticated && userRole === "job_seeker") {
+    dashboard = '/jobseeker-dashboard';
+  } else {
+    dashboard = '/auth'; // Redirect to profile if profile is incomplete or missing
+  }
   return (
     <section className="w-full py-12 bg-gray-50">
       <div className="container mx-auto px-4 md:px-6">
@@ -38,7 +51,7 @@ export default function Home() {
                 Browse Jobs
               </button>
             </Link>
-            <Link to="/auth">
+            <Link to={dashboard}>
               <button className="w-full sm:w-auto px-8 py-3 bg-white text-blue-500 border border-blue-500 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors">
                 Post a Job
               </button>

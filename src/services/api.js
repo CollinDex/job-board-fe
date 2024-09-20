@@ -38,6 +38,24 @@ export const register = async (username, email, password, role) => {
   }
 };
 
+export const createEmployerProfile = async (profileData) => {
+  try {
+    const res = await api.post('/profile/employer', profileData);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error.message
+  }
+};
+
+export const createJobSeekerProfile = async (profileData) => {
+  try {
+    const res = await api.post('/profile/job-seeker', profileData);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error.message
+  }
+};
+
 export const getJobs = async () => {
   try {
     const response = await api.get('/jobs');

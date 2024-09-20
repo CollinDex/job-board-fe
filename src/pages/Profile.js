@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../components/ui/Modal';
 import useAuthRedirect from '../services/authRedirect';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { createEmployerProfile, createJobSeekerProfile } from '../services/api';
+import { setProfile } from '../store/profileSlice';
 
 export default function CreateProfile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const userRole = useSelector((state) => state.auth.user.role); // User role from Redux store
 
   useAuthRedirect(); //For protected Routes
@@ -18,27 +21,28 @@ export default function CreateProfile() {
     const formData = new FormData(event.currentTarget);
 
     let profileData = {};
-    
-    if (userRole === 'employer') {
-      profileData = {
-        profile_name: formData.get('profile_name'),
-        profile_phone: formData.get('profile_phone'),
-        profile_address: formData.get('profile_address'),
-        profile_company: formData.get('profile_company'),
-        profile_position: formData.get('profile_position'),
-        profile_company_address: formData.get('profile_company_address'),
-      };
-    } else if (userRole === 'job_seeker') {
-      profileData = {
-        profile_name: formData.get('profile_name'),
-        profile_phone: formData.get('profile_phone'),
-        profile_address: formData.get('profile_address'),
-        profile_resume: formData.get('profile_resume'),
-      };
-    }
 
     try {
-      // await createUserProfile(profileData); // API Call to create profile
+        if (userRole === 'employer') {
+            profileData = {
+              profile_name: formData.get('profile_name'),
+              profile_phone: formData.get('profile_phone'),
+              profile_address: formData.get('profile_address'),
+              profile_company: formData.get('profile_company'),
+              profile_position: formData.get('profile_position'),
+              profile_company_address: formData.get('profile_company_address'),
+            };
+            const profile = await createEmployerProfile(profileData);
+            dispatch(setProfile(profile.data.profile));
+          } else if (userRole === 'job_seeker') {
+            profileData = {
+              profile_name: formData.get('profile_name'),
+              profile_phone: formData.get('profile_phone'),
+              profile_address: formData.get('profile_address'),
+            };
+            const profile = await createJobSeekerProfile(profileData);
+            dispatch(setProfile(profile.data.profile));
+          }
       setIsModalOpen(true);
     } catch (err) {
       setError('Failed to create profile. Please try again.');
@@ -48,7 +52,7 @@ export default function CreateProfile() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Create Your Profile</h1>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
       <form onSubmit={handleSubmit} className="max-w-md mx-auto">
         <div className="mb-4">
           <label htmlFor="profile_name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -80,12 +84,12 @@ export default function CreateProfile() {
           </>
         )}
 
-        {userRole === 'job_seeker' && (
+        {/* {userRole === 'job_seeker' && (
           <div className="mb-4">
-            <label htmlFor="profile_resume" className="block text-sm font-medium text-gray-700">Resume Link</label>
-            <input type="text" id="profile_resume" name="profile_resume" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+            <label htmlFor="profile_resume" className="block text-sm font-medium text-gray-700">Resume Link (Optional) </label>
+            <input type="text" id="profile_resume" name="profile_resume" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
           </div>
-        )}
+        )} */}
 
         <button type="submit" className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
           Create Profile
