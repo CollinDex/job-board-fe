@@ -4,7 +4,7 @@ import JobCard from '../components/JobCard';
 import SearchFilters from '../components/SearchFilters';
 
 function JobSearch() {
-  const [jobs, setJobs] = useState([]);
+  //const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
@@ -17,7 +17,7 @@ function JobSearch() {
     setLoading(true);
     try {
       const response = await getJobs(params);
-      setJobs(response.data);
+      //setJobs(response.data);
     } catch (err) {
       setError('Failed to fetch jobs');
     } finally {
@@ -31,6 +31,8 @@ function JobSearch() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
+
+  const jobs = [];
 
   return (
     <div className="container mx-auto px-4">

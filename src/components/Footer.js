@@ -10,14 +10,14 @@ export default function Footer() {
             <h2 className="text-lg font-semibold">JobBoard</h2>
             <p className="text-sm text-gray-600">Find your dream job or post job openings.</p>
           </div>
-          <div className="w-full md:w-auto mb-4 md:mb-0">
+          {/* <div className="w-full md:w-auto mb-4 md:mb-0">
             <h3 className="text-sm font-semibold mb-2">Quick Links</h3>
             <ul className="flex space-x-4">
               <li><Link to="/" className="text-sm text-blue-500 hover:text-blue-600">Home</Link></li>
-              <li><Link to="/search" className="text-sm text-blue-500 hover:text-blue-600">Search Jobs</Link></li>
+              <li><Link to="/jobs" className="text-sm text-blue-500 hover:text-blue-600">Search Jobs</Link></li>
               <li><Link to="/auth" className="text-sm text-blue-500 hover:text-blue-600">Post a Job</Link></li>
             </ul>
-          </div>
+          </div> */}
           <div className="w-full md:w-auto mb-4 md:mb-0">
             <h3 className="text-sm font-semibold mb-2">Contact Us</h3>
             <p className="text-sm text-gray-600">Email: info@jobboard.com</p>
