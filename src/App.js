@@ -9,6 +9,7 @@ import JobSearch from './pages/JobSearch';
 import JobDetails from './pages/JobDetails';
 import EmployerDashboard from './pages/EmployerDashboard';
 import JobSeekerDashboard from './pages/JobSeekerDashboard';
+import CreateProfile from './pages/Profile';
 import Auth from './pages/Auth';
 
 function PrivateRoute({ children }) {
@@ -24,7 +25,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/search" element={<JobSearch />} />
+            <Route path="/jobs" element={<JobSearch />} />
             <Route path="/job/:id" element={<JobDetails />} />
             <Route 
               path="/employer-dashboard" 
@@ -42,6 +43,7 @@ function App() {
                 </PrivateRoute>
               } 
             />
+            <Route path="/profile" element={<CreateProfile />} />
             <Route path="/auth" element={<Auth />} />
           </Routes>
         </main>

@@ -3,13 +3,21 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login, register } from '../services/api';
 import { setCredentials } from '../store/authSlice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [role, setRole] = useState('');
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -21,15 +29,25 @@ export default function Auth() {
     try {
       let response;
       if (isLogin) {
-        response = await login({ email, password });
+        response = await login(email, password);
       } else {
-        response = await register({ name, email, password });
+        response = await register(name, email, password, role);
       }
 
       dispatch(setCredentials(response.data));
-      navigate('/');
-    } catch (err) {
-      setError('Authentication failed');
+
+      const user = response.data.user;
+      
+      // Navigate based on role and profile status
+      if (user.role === "employer" && user.profile) {
+        navigate('/employer-dashboard');
+      } else if (user.role === "job_seeker" && user.profile) {
+        navigate('/jobseeker-dashboard');
+      } else {
+        navigate('/profile'); // Redirect to profile if profile is incomplete or missing
+      }
+    } catch (error) {
+      setError(`Authentication failed, ${error?.message}`);
     }
   };
 
@@ -46,8 +64,9 @@ export default function Auth() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {!isLogin && (
               <div>
+                <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Name
+                  User Name
                 </label>
                 <div className="mt-1">
                   <input
@@ -59,6 +78,40 @@ export default function Auth() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
+                </div>
+                </div>
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-gray-700">User Type</label>
+                  <div className="mt-1">
+                    <div className="flex items-center">
+                      <input
+                        id="employer"
+                        name="role"
+                        type="radio"
+                        value="employer"
+                        checked={role === "employer"}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      />
+                      <label htmlFor="employer" className="ml-2 block text-sm text-gray-700">
+                        Employer
+                      </label>
+                    </div>
+                    <div className="flex items-center mt-2">
+                      <input
+                        id="job_seeker"
+                        name="role"
+                        type="radio"
+                        value="job_seeker"
+                        checked={role === "job_seeker"}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      />
+                      <label htmlFor="job_seeker" className="ml-2 block text-sm text-gray-700">
+                        Job Seeker
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -84,17 +137,24 @@ export default function Auth() {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <div className="mt-1">
+              <div className="relative mt-1">
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute inset-y-0 right-0 px-3 py-2 text-sm text-gray-500"
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </button>
               </div>
             </div>
 
