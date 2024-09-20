@@ -32,7 +32,7 @@ export default function Home() {
             </form>
           </div>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link to="/search">
+            <Link to="/jobs">
               <button className="w-full sm:w-auto px-8 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors">
                 <Briefcase className="h-5 w-5 inline-block mr-2" />
                 Browse Jobs
