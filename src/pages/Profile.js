@@ -5,6 +5,7 @@ import useAuthRedirect from '../services/authRedirect';
 import { useDispatch, useSelector } from 'react-redux';
 import { createEmployerProfile, createJobSeekerProfile } from '../services/api';
 import { setProfile } from '../store/profileSlice';
+import { toast } from 'react-toastify';
 
 export default function CreateProfile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,9 +44,11 @@ export default function CreateProfile() {
             const profile = await createJobSeekerProfile(profileData);
             dispatch(setProfile(profile.data.profile));
           }
+          toast.success("User Profile Created Succesfully");
       setIsModalOpen(true);
     } catch (err) {
       setError('Failed to create profile. Please try again.');
+      toast.error("Failed to create Profile");
     }
   };
 
@@ -101,7 +104,6 @@ export default function CreateProfile() {
         <p className="mb-4">Your profile has been created. You can now start using the job board.</p>
         <button 
           onClick={() => {
-            console.log(userRole);
             if (userRole === 'employer') {
               navigate('/employer-dashboard');
             } else if (userRole === 'job_seeker') {

@@ -56,6 +56,33 @@ export const createJobSeekerProfile = async (profileData) => {
   }
 };
 
+export const getProfile = async () => {
+  try {
+    const res = await api.get('/profile');
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error.message
+  }
+};
+
+export const updateProfile = async (profileData) => {
+  try {
+    const res = await api.patch('/profile', profileData);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error.message
+  }
+};
+
+export const deleteProfile = async () => {
+  try {
+    const res = await api.delete('/profile');
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error.message
+  }
+};
+
 export const getJobs = async () => {
   try {
     const response = await api.get('/jobs');

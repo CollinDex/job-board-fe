@@ -11,6 +11,8 @@ import EmployerDashboard from './pages/EmployerDashboard';
 import JobSeekerDashboard from './pages/JobSeekerDashboard';
 import CreateProfile from './pages/Profile';
 import Auth from './pages/Auth';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function PrivateRoute({ children }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -22,6 +24,18 @@ function App() {
     <Router>
       <div className="App flex flex-col min-h-screen bg-gray-50">
         <Header />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />

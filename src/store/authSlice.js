@@ -5,9 +5,8 @@ const user = JSON.parse(localStorage.getItem('user')); // Declare the 'user' var
 
 const initialState = {
   user: user || null,
-  isAuthenticated: user ? true : false // Use 'false' as a default for unauthenticated users
+  isAuthenticated: !!user, // Use '!!user' to set boolean flag
 };
-
 
 const authSlice = createSlice({
   name: 'auth',
@@ -23,7 +22,8 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('user'); // Remove user from localStorage on logout
+      localStorage.removeItem('user'); // Clear localStorage on logout
+      localStorage.removeItem('token');
     },
   },
 });

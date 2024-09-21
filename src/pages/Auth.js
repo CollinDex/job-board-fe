@@ -5,6 +5,7 @@ import { login, register } from '../services/api';
 import { setCredentials } from '../store/authSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -36,6 +37,9 @@ export default function Auth() {
 
       dispatch(setCredentials(response.data));
 
+      isLogin && toast.success("Login Succesful");
+      !isLogin && toast.success("Registration Succesful");
+
       const user = response.data.user;
       
       // Navigate based on role and profile status
@@ -47,7 +51,8 @@ export default function Auth() {
         navigate('/profile'); // Redirect to profile if profile is incomplete or missing
       }
     } catch (error) {
-      setError(`Authentication failed, ${error?.message}`);
+      toast.error("Authentication Failed");
+      setError(`Authentication failed`);
     }
   };
 
@@ -159,7 +164,7 @@ export default function Auth() {
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm">{error}</div>
+              <div className="text-red-600 text-sm text-center">{error}</div>
             )}
 
             <div>
