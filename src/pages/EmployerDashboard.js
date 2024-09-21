@@ -180,6 +180,7 @@ export default function EmployerDashboard() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center">Dashboard</h1>
+      <h2 className="text-xl font-semibold mb-4 text-center">Welcome, {user.username}</h2>
       
       {/* User Profile Section */}
       <section className="bg-white shadow-md rounded-lg p-6 mb-8">
