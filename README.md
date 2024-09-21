@@ -1,70 +1,84 @@
-# Getting Started with Create React App
+# Job Listing Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description
 
-## Available Scripts
+The Job Listing Platform is a web application that connects employers with job seekers. Employers can post jobs, manage applications, and view job listings, while job seekers can search for jobs, apply, and track the status of their applications. The platform features a responsive and interactive user interface, ensuring a seamless experience for both parties.
 
-In the project directory, you can run:
+## Table of Contents
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Setup Instructions](#setup-instructions)
+- [API Endpoints](#api-endpoints)
+- [Contributing](#contributing)
+- [License](#license)
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Employer Features**:
+  - Create and manage job listings.
+  - View and update company profile.
+  - Track job applications from job seekers.
+  - Edit and delete jobs.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Job Seeker Features**:
+  - Search and apply for jobs.
+  - View job listings with filters.
+  - Track application status.
+  - Update personal profile.
 
-### `npm test`
+- **Authentication**:
+  - User authentication with JWT.
+  - Role-based access control (Employers, Job Seekers).
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Responsive Design**:
+  - Optimized for both mobile and desktop devices.
 
-### `npm run build`
+- **Interactive UI**:
+  - Color-coded job application status.
+  - Dynamic, responsive design using TailwindCSS.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Technologies Used
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Frontend**:
+  - React
+  - Redux (for state management)
+  - React Router (for routing)
+  - TailwindCSS (for styling)
+  - React Toastify (for notifications)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Backend**: https://github.com/CollinDex/job-board-api
+  - Node.js
+  - Express.js
+  - MongoDB (with Mongoose)
+  - JWT (for authentication)
+  - Multer (for file uploads)
 
-### `npm run eject`
+- **APIs**:
+  - Custom RESTful API built using Express.js and MongoDB.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Setup Instructions
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Prerequisites
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- **Node.js** installed
+- **MongoDB** installed locally or a MongoDB Atlas account.
+- **Yarn** or **npm** installed globally.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Steps to run the project:
 
-## Learn More
+1. **Clone the repository**:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   ```bash
+   git clone https://github.com/yourusername/job-listing-platform.git
+   cd job-listing-platform
+   ```
+2. **Install Packages**:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   ```bash
+   npm install
+   ```
+3. **Run App**:
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+   ```bash
+   npm start
+   ``` 
