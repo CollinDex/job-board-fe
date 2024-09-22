@@ -18,9 +18,16 @@ const jobsSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    updateJobInStore: (state, action) => {
+      const updatedJob = action.payload;
+      const index = state.jobs.findIndex((job) => job.job_id === updatedJob.job_id);
+      if (index !== -1) {
+        state.jobs[index] = updatedJob;
+      }
+    },
   },
 });
 
-export const { setJobs, setLoading, setError } = jobsSlice.actions;
+export const { setJobs, setLoading, setError, updateJobInStore } = jobsSlice.actions;
 
 export default jobsSlice.reducer;

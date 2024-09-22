@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getEmployerJobs, deleteJob, createJob, getProfile, updateProfile, deleteProfile } from '../services/api';
+import { getEmployerJobs, deleteJob, createJob, getProfile, updateProfile, deleteProfile, postJob, getJobs, editJob } from '../services/api';
 import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -8,54 +8,107 @@ import { TextArea } from '../components/ui/TextArea';
 import { setProfile } from '../store/profileSlice';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { setJobListing, setJobs, updateJobInStore } from '../store/jobsSlice';
 
 const dummyJobs = [
   {
-    id: 1,
-    title: "Software Engineer",
-    company: "Tech Innovations Inc.",
-    location: "San Francisco, CA",
-    salary: "120,000",
+    "id":1,
+    "title": "Senior Developer",
+    "description": "Looking for an experienced developer with strong leadership skills to guide our team through complex projects.",
+    "qualifications": [
+      "Bachelor's degree in Computer Science or related field",
+      "5+ years of experience in full-stack development",
+      "Strong knowledge of JavaScript, React, and Node.js"
+    ],
+    "responsibilities": [
+      "Develop and maintain scalable applications",
+      "Lead the team of developers",
+      "Collaborate with stakeholders to define software requirements"
+    ],
+    "location": "Remote",
+    "min_salary": 80000,
+    "max_salary": 150000,
+    "job_type": "Full-time"
   },
   {
-    id: 2,
-    title: "Frontend Developer",
-    company: "Creative Solutions",
-    location: "New York, NY",
-    salary: "110,000",
+    "id":2,
+    "title": "UX/UI Designer",
+    "description": "We are looking for a creative designer to improve our user experience and interface design.",
+    "qualifications": [
+      "Bachelor's degree in Design or related field",
+      "3+ years of experience in UX/UI design",
+      "Proficiency in design tools like Figma and Adobe XD"
+    ],
+    "responsibilities": [
+      "Design user-friendly interfaces",
+      "Create wireframes and prototypes",
+      "Collaborate with the development team to ensure a seamless user experience"
+    ],
+    "location": "San Francisco, CA",
+    "min_salary": 70000,
+    "max_salary": 100000,
+    "job_type": "Contract"
   },
   {
-    id: 3,
-    title: "Data Analyst",
-    company: "DataCorp",
-    location: "Remote",
-    salary: "95,000",
+    "id":3,
+    "title": "Backend Developer",
+    "description": "Seeking a backend developer to build and maintain server-side applications.",
+    "qualifications": [
+      "Bachelor's degree in Computer Science",
+      "3+ years of experience in backend development",
+      "Strong proficiency in Node.js, Express, and databases (MongoDB, SQL)"
+    ],
+    "responsibilities": [
+      "Develop server-side logic and database structures",
+      "Write secure APIs and microservices",
+      "Maintain code quality and scalability"
+    ],
+    "location": "New York, NY",
+    "min_salary": 60000,
+    "max_salary": 120000,
+    "job_type": "Full-time"
   },
   {
-    id: 4,
-    title: "UX/UI Designer",
-    company: "Design Studio",
-    location: "Los Angeles, CA",
-    salary: "105,000",
+    "id":4,
+    "title": "Project Manager",
+    "description": "Looking for a project manager with a passion for technology and team collaboration.",
+    "qualifications": [
+      "Bachelor's degree in Business or related field",
+      "4+ years of experience in project management",
+      "Experience with Agile methodology"
+    ],
+    "responsibilities": [
+      "Manage project timelines and deliverables",
+      "Lead daily stand-ups and sprint planning meetings",
+      "Coordinate with clients and team members"
+    ],
+    "location": "Chicago, IL",
+    "min_salary": 70000,
+    "max_salary": 110000,
+    "job_type": "Full-time"
   },
   {
-    id: 5,
-    title: "Backend Developer",
-    company: "Cloud Tech Ltd.",
-    location: "Austin, TX",
-    salary: "115,000",
-  },
-  {
-    id: 6,
-    title: "Project Manager",
-    company: "Project Hub",
-    location: "Seattle, WA",
-    salary: "130,000",
-  },
+    "id":5,
+    "title": "Frontend Developer",
+    "description": "Looking for a passionate frontend developer to build cutting-edge web applications.",
+    "qualifications": [
+      "Bachelor's degree in Computer Science or related field",
+      "3+ years of experience with React.js and CSS",
+      "Knowledge of responsive web design and modern frontend frameworks"
+    ],
+    "responsibilities": [
+      "Build and maintain web applications",
+      "Collaborate with the backend team to integrate APIs",
+      "Optimize web applications for performance and scalability"
+    ],
+    "location": "Remote",
+    "min_salary": 65000,
+    "max_salary": 110000,
+    "job_type": "Part-time"
+  }
 ];
 
 export default function EmployerDashboard() {
-  const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -65,20 +118,21 @@ export default function EmployerDashboard() {
   const [profileEdit, setProfileEdit] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const profile = useSelector((state) => state.profile?.profile);
+  const jobs = useSelector((state) => state.jobs.jobs);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchDashboardData();
-    fetchEmployerJobs();
-    fetchApplications();
   }, []);
 
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
       const res = await getProfile();
+      const jobs = await getJobs();
       dispatch(setProfile(res.data?.profile));
+      dispatch(setJobs(jobs.data?.jobs));
     } catch (err) {
       setError(err.message);
       toast.error(err.message);
@@ -130,17 +184,60 @@ export default function EmployerDashboard() {
     }
   };
 
-  const fetchEmployerJobs = async () => {
-    setLoading(true);
+  const handlePostJob = async (event) => {
+    event.preventDefault();
+  
+    const jobData = {
+      title: event.currentTarget.title.value,
+      description: event.currentTarget.description.value,
+      qualifications: event.currentTarget.qualifications.value.split(',').map((item) => item.trim()),
+      responsibilities: event.currentTarget.responsibilities.value.split(',').map((item) => item.trim()),
+      location: event.currentTarget.location.value,
+      min_salary: parseInt(event.currentTarget.min_salary.value),
+      max_salary: parseInt(event.currentTarget.max_salary.value),
+      job_type: event.currentTarget.job_type.value,
+      status: 'open',
+      job_id: currentJob?._id
+    };
+  
+    const toastId = toast.loading('Processing job...');
+  
     try {
-      //const response = await getEmployerJobs();
-      setJobs(dummyJobs);
-    } catch (err) {
-      setError('Failed to fetch jobs');
-    } finally {
-      setLoading(false);
+      if (currentJob) {
+        // Edit job if `currentJob` exists
+        await editJob(jobData);
+        toast.update(toastId, {
+          render: 'Job updated successfully!',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+        // Update jobs in Redux store
+        dispatch(updateJobInStore(jobData));
+      } else {
+        // Post a new job
+        const res = await postJob(jobData);
+        dispatch(setJobs([res.data?.job, ...jobs])); // Add new job to the jobs array
+        toast.update(toastId, {
+          render: 'Job posted successfully!',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      }
+  
+      setIsModalOpen(false);
+    } catch (error) {
+      toast.update(toastId, {
+        render: `Failed to ${currentJob ? "update" : "post"} job: ${error.message}`,
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   };
+    
+
 
   const fetchApplications = async () => {
     try {
@@ -151,40 +248,21 @@ export default function EmployerDashboard() {
     }
   };
 
-  const handleJobSubmit = async (jobData) => {
-    try {
-      if (currentJob) {
-        //await updateJob(currentJob.id, jobData);
-      } else {
-        await createJob(jobData);
-      }
-      fetchEmployerJobs();
-      setIsModalOpen(false);
-    } catch (err) {
-      setError('Failed to save job');
-    }
-  };
-
-  const handleDeleteJob = async (jobId) => {
-    try {
-      await deleteJob(jobId);
-      fetchEmployerJobs();
-    } catch (err) {
-      setError('Failed to delete job');
-    }
-  };
-
   if (loading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-500">{error}</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center">Dashboard</h1>
-      <h2 className="text-xl font-semibold mb-4 text-center">Welcome, {user.username}</h2>
-      
+      <h2 className="text-xl font-semibold mb-4 text-center">
+        Welcome, {user.username}
+      </h2>
+
       {/* User Profile Section */}
       <section className="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">User Profile</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+          User Profile
+        </h2>
         {profileEdit ? (
           <form onSubmit={handleEditProfile}>
             <Input
@@ -224,7 +302,10 @@ export default function EmployerDashboard() {
               className="mb-4"
             />
             <div className="flex justify-between space-x-4">
-              <Button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+              <Button
+                type="submit"
+                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+              >
                 Save Changes
               </Button>
               <Button
@@ -241,27 +322,47 @@ export default function EmployerDashboard() {
           <div className="text-gray-700">
             <div className="mb-4">
               <p className="text-sm font-semibold text-gray-600">Name:</p>
-              <p className="text-base font-normal text-gray-900">{profile?.profile_name}</p>
+              <p className="text-base font-normal text-gray-900">
+                {profile?.profile_name}
+              </p>
             </div>
             <div className="mb-4">
               <p className="text-sm font-semibold text-gray-600">Phone:</p>
-              <p className="text-base font-normal text-gray-900">{profile?.profile_phone}</p>
+              <p className="text-base font-normal text-gray-900">
+                {profile?.profile_phone}
+              </p>
+            </div>
+            <div className="mb-4">
+              <p className="text-sm font-semibold text-gray-600">Email:</p>
+              <p className="text-base font-normal text-gray-900">
+                {user?.email}
+              </p>
             </div>
             <div className="mb-4">
               <p className="text-sm font-semibold text-gray-600">Address:</p>
-              <p className="text-base font-normal text-gray-900">{profile?.profile_address}</p>
+              <p className="text-base font-normal text-gray-900">
+                {profile?.profile_address}
+              </p>
             </div>
             <div className="mb-4">
               <p className="text-sm font-semibold text-gray-600">Company:</p>
-              <p className="text-base font-normal text-gray-900">{profile?.profile_company}</p>
+              <p className="text-base font-normal text-gray-900">
+                {profile?.profile_company}
+              </p>
             </div>
             <div className="mb-4">
               <p className="text-sm font-semibold text-gray-600">Position:</p>
-              <p className="text-base font-normal text-gray-900">{profile?.profile_position}</p>
+              <p className="text-base font-normal text-gray-900">
+                {profile?.profile_position}
+              </p>
             </div>
             <div className="mb-4">
-              <p className="text-sm font-semibold text-gray-600">Company Address:</p>
-              <p className="text-base font-normal text-gray-900">{profile?.profile_company_address}</p>
+              <p className="text-sm font-semibold text-gray-600">
+                Company Address:
+              </p>
+              <p className="text-base font-normal text-gray-900">
+                {profile?.profile_company_address}
+              </p>
             </div>
             <div className="flex space-x-4">
               <Button
@@ -281,33 +382,76 @@ export default function EmployerDashboard() {
         )}
       </section>
 
-
       {/* Job Listings Section */}
       <section className="bg-white shadow-md rounded-lg p-6 mb-8">
         <h2 className="text-2xl font-semibold mb-4">Your Job Listings</h2>
-        <Button onClick={() => {
-          setCurrentJob(null);
-          setIsModalOpen(true);
-        }} className="mb-4">Post New Job</Button>
+        <Button
+          onClick={() => {
+            setCurrentJob(null);
+            setIsModalOpen(true);
+          }}
+          className="mb-4"
+        >
+          Post New Job
+        </Button>
+
         {jobs.map((job) => (
-          <div key={job.id} className="border-b border-gray-200 py-4 last:border-b-0">
+          <div
+            key={job._id}
+            className="border-b border-gray-200 py-4 last:border-b-0"
+          >
             <h3 className="text-xl font-bold">{job.title}</h3>
-            <p className="text-gray-600">{job.company}</p>
             <p className="text-gray-600">{job.location}</p>
-            <p className="text-gray-600">${job.salary}</p>
-            <div className="mt-2">
-              <Button variant="outline" onClick={() => {
-                setCurrentJob(job);
-                setIsModalOpen(true);
-              }} className="mr-2">Edit</Button>
-              <Button variant="destructive" onClick={() => handleDeleteJob(job.id)}>Delete</Button>
+            <p className="text-gray-600">
+              Min Salary: ${job.min_salary} - Max Salary: ${job.max_salary}
+            </p>
+            <p className="text-gray-600 mb-2">Job Type: {job.job_type}</p>
+
+            <h4 className="text-lg font-semibold">Job Description</h4>
+            <p className="text-gray-600 mb-2">{job.description}</p>
+
+            <h4 className="text-lg font-semibold">Qualifications</h4>
+            <ul className="list-disc ml-6 mb-2">
+              {job.qualifications.map((qualification, index) => (
+                <li key={index} className="text-gray-600">
+                  {qualification}
+                </li>
+              ))}
+            </ul>
+
+            <h4 className="text-lg font-semibold">Responsibilities</h4>
+            <ul className="list-disc ml-6 mb-2">
+              {job.responsibilities.map((responsibility, index) => (
+                <li key={index} className="text-gray-600">
+                  {responsibility}
+                </li>
+              ))}
+            </ul>
+            <div className="flex space-x-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCurrentJob(job);
+                  setIsModalOpen(true);
+                }}
+                className="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-300 ease-in-out"
+              >
+                Edit
+              </Button>
+              <Button
+                variant="destructive"
+                /* onClick={() => handleDeleteJob(job.id)} */
+                className="bg-red-500 text-white py-2 px-4 rounded-md shadow-lg hover:bg-red-600 transition duration-300 ease-in-out"
+              >
+                Delete
+              </Button>
             </div>
           </div>
         ))}
       </section>
 
       {/* Applications Section */}
-      
+
       {/* <section className="bg-white shadow-md rounded-lg p-6">
         <h2 className="text-2xl font-semibold mb-4">Applications</h2>
         {applications.map((application) => (
@@ -323,30 +467,88 @@ export default function EmployerDashboard() {
 
       {/* Job Post/Edit Modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2 className="text-2xl font-bold mb-4">{currentJob ? 'Edit Job' : 'Post New Job'}</h2>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          handleJobSubmit({
-            title: e.currentTarget.title.value,
-            company: e.currentTarget.company.value,
-            location: e.currentTarget.location.value,
-            salary: parseInt(e.currentTarget.salary.value),
-            description: e.currentTarget.description.value,
-          });
-        }}>
-          <Input name="title" defaultValue={currentJob?.title} label="Job Title" className="mb-4" />
-          <Input name="company" defaultValue={currentJob?.company} label="Company" className="mb-4" />
-          <Input name="location" defaultValue={currentJob?.location} label="Location" className="mb-4" />
-          <Input name="salary" defaultValue={currentJob?.salary} label="Salary" type="number" className="mb-4" />
-          <TextArea name="description" defaultValue={currentJob?.description} label="Job Description" className="mb-4" />
-          <Button type="submit">{currentJob ? 'Update Job' : 'Post Job'}</Button>
+        <h2 className="text-2xl font-bold mb-4">
+          {currentJob ? "Edit Job" : "Post New Job"}
+        </h2>
+        <form
+          onSubmit={(e) => handlePostJob(e)}
+        >
+          <Input
+            name="title"
+            defaultValue={currentJob?.title}
+            label="Job Title"
+            className="mb-4"
+          />
+          <TextArea
+            name="description"
+            defaultValue={currentJob?.description}
+            label="Job Description"
+            className="mb-4"
+          />
+          <TextArea
+            name="qualifications"
+            defaultValue={currentJob?.qualifications?.join(", ")}
+            label="Qualifications (comma-separated)"
+            className="mb-4"
+          />
+          <TextArea
+            name="responsibilities"
+            defaultValue={currentJob?.responsibilities?.join(", ")}
+            label="Responsibilities (comma-separated)"
+            className="mb-4"
+          />
+          <Input
+            name="location"
+            defaultValue={currentJob?.location}
+            label="Location"
+            className="mb-4"
+          />
+          <div className="flex space-x-4">
+            <Input
+              name="min_salary"
+              defaultValue={currentJob?.min_salary}
+              label="Minimum Salary"
+              type="number"
+              className="mb-4"
+            />
+            <Input
+              name="max_salary"
+              defaultValue={currentJob?.max_salary}
+              label="Maximum Salary"
+              type="number"
+              className="mb-4"
+            />
+          </div>
+          <Input
+            name="job_type"
+            defaultValue={currentJob?.job_type}
+            label="Job Type (e.g. Full-time, Part-time)"
+            className="mb-4"
+          />
+          <div className="flex justify-end space-x-4">
+            <Button
+              type="button"
+              className="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition duration-300 ease-in-out"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-300 ease-in-out">
+              {currentJob ? "Update Job" : "Post Job"}
+            </Button>
+          </div>
         </form>
       </Modal>
 
       {/* Modal for Delete confirmation */}
-      <Modal isOpen={isDeleteProfileModalOpen} onClose={() => setIsDeleteProfileModalOpen(false)} title="Delete Profile">
+      <Modal
+        isOpen={isDeleteProfileModalOpen}
+        onClose={() => setIsDeleteProfileModalOpen(false)}
+        title="Delete Profile"
+      >
         <p className="text-gray-600">
-          Are you sure you want to delete your profile? This action cannot be undone.
+          Are you sure you want to delete your profile? This action cannot be
+          undone.
         </p>
         <div className="flex justify-end mt-4">
           <button
@@ -363,7 +565,6 @@ export default function EmployerDashboard() {
           </button>
         </div>
       </Modal>
-      
     </div>
   );
 }
