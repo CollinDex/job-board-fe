@@ -18,7 +18,7 @@ function JobCard({ job }) {
           </div>
         </div>
         <Link
-          to={`/job/${job.id}`}
+          to={`/job/${job._id}`}
           className="block mt-4 bg-blue-500 text-white px-4 py-2 rounded text-center hover:bg-blue-600 transition-all duration-300 ease-in-out"
         >
           View Details

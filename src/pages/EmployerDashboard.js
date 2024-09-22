@@ -10,104 +10,6 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { deleteJobInStore, setJobs, updateJobInStore } from '../store/jobsSlice';
 
-const dummyJobs = [
-  {
-    "id":1,
-    "title": "Senior Developer",
-    "description": "Looking for an experienced developer with strong leadership skills to guide our team through complex projects.",
-    "qualifications": [
-      "Bachelor's degree in Computer Science or related field",
-      "5+ years of experience in full-stack development",
-      "Strong knowledge of JavaScript, React, and Node.js"
-    ],
-    "responsibilities": [
-      "Develop and maintain scalable applications",
-      "Lead the team of developers",
-      "Collaborate with stakeholders to define software requirements"
-    ],
-    "location": "Remote",
-    "min_salary": 80000,
-    "max_salary": 150000,
-    "job_type": "Full-time"
-  },
-  {
-    "id":2,
-    "title": "UX/UI Designer",
-    "description": "We are looking for a creative designer to improve our user experience and interface design.",
-    "qualifications": [
-      "Bachelor's degree in Design or related field",
-      "3+ years of experience in UX/UI design",
-      "Proficiency in design tools like Figma and Adobe XD"
-    ],
-    "responsibilities": [
-      "Design user-friendly interfaces",
-      "Create wireframes and prototypes",
-      "Collaborate with the development team to ensure a seamless user experience"
-    ],
-    "location": "San Francisco, CA",
-    "min_salary": 70000,
-    "max_salary": 100000,
-    "job_type": "Contract"
-  },
-  {
-    "id":3,
-    "title": "Backend Developer",
-    "description": "Seeking a backend developer to build and maintain server-side applications.",
-    "qualifications": [
-      "Bachelor's degree in Computer Science",
-      "3+ years of experience in backend development",
-      "Strong proficiency in Node.js, Express, and databases (MongoDB, SQL)"
-    ],
-    "responsibilities": [
-      "Develop server-side logic and database structures",
-      "Write secure APIs and microservices",
-      "Maintain code quality and scalability"
-    ],
-    "location": "New York, NY",
-    "min_salary": 60000,
-    "max_salary": 120000,
-    "job_type": "Full-time"
-  },
-  {
-    "id":4,
-    "title": "Project Manager",
-    "description": "Looking for a project manager with a passion for technology and team collaboration.",
-    "qualifications": [
-      "Bachelor's degree in Business or related field",
-      "4+ years of experience in project management",
-      "Experience with Agile methodology"
-    ],
-    "responsibilities": [
-      "Manage project timelines and deliverables",
-      "Lead daily stand-ups and sprint planning meetings",
-      "Coordinate with clients and team members"
-    ],
-    "location": "Chicago, IL",
-    "min_salary": 70000,
-    "max_salary": 110000,
-    "job_type": "Full-time"
-  },
-  {
-    "id":5,
-    "title": "Frontend Developer",
-    "description": "Looking for a passionate frontend developer to build cutting-edge web applications.",
-    "qualifications": [
-      "Bachelor's degree in Computer Science or related field",
-      "3+ years of experience with React.js and CSS",
-      "Knowledge of responsive web design and modern frontend frameworks"
-    ],
-    "responsibilities": [
-      "Build and maintain web applications",
-      "Collaborate with the backend team to integrate APIs",
-      "Optimize web applications for performance and scalability"
-    ],
-    "location": "Remote",
-    "min_salary": 65000,
-    "max_salary": 110000,
-    "job_type": "Part-time"
-  }
-];
-
 export default function EmployerDashboard() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -191,8 +93,8 @@ export default function EmployerDashboard() {
       title: event.currentTarget.title.value,
       description: event.currentTarget.description.value,
       company: profile.profile_company,
-      qualifications: event.currentTarget.qualifications.value.split(',').map((item) => item.trim()),
-      responsibilities: event.currentTarget.responsibilities.value.split(',').map((item) => item.trim()),
+      qualifications: event.currentTarget.qualifications.value.split('/').map((item) => item.trim()),
+      responsibilities: event.currentTarget.responsibilities.value.split('/').map((item) => item.trim()),
       location: event.currentTarget.location.value,
       min_salary: parseInt(event.currentTarget.min_salary.value),
       max_salary: parseInt(event.currentTarget.max_salary.value),
@@ -500,13 +402,13 @@ export default function EmployerDashboard() {
           <TextArea
             name="qualifications"
             defaultValue={currentJob?.qualifications?.join(", ")}
-            label="Qualifications (comma-separated)"
+            label="Qualifications (backslash-separated)"
             className="mb-4"
           />
           <TextArea
             name="responsibilities"
             defaultValue={currentJob?.responsibilities?.join(", ")}
-            label="Responsibilities (comma-separated)"
+            label="Responsibilities (backslash-separated)"
             className="mb-4"
           />
           <Input
