@@ -93,6 +93,7 @@ export default function Auth() {
                         id="employer"
                         name="role"
                         type="radio"
+                        required
                         value="employer"
                         checked={role === "employer"}
                         onChange={(e) => setRole(e.target.value)}
@@ -107,6 +108,7 @@ export default function Auth() {
                         id="job_seeker"
                         name="role"
                         type="radio"
+                        required
                         value="job_seeker"
                         checked={role === "job_seeker"}
                         onChange={(e) => setRole(e.target.value)}
