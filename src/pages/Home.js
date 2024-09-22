@@ -1,11 +1,16 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, Briefcase } from 'lucide-react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setKeyword, setPostedJobs } from '../store/jobsSlice';
+//import { searchJobs } from '../services/api';
 
 export default function Home() {
   const userRole = useSelector((state) => state.auth.user?.role); // User role from Redux store
   const isAuthenticated = useSelector((state) => state.auth?.isAuthenticated);
+  //const keyword = useSelector((state) => state.jobs?.keyword);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   let dashboard;
 
@@ -16,6 +21,28 @@ export default function Home() {
   } else {
     dashboard = '/auth'; // Redirect to profile if profile is incomplete or missing
   }
+/* 
+  useEffect(() => {
+    fetchJobs(keyword);
+  }, []);
+
+  const fetchJobs = async (params) => {
+    try {
+      const response = await searchJobs(params);
+      dispatch(setPostedJobs(response.data.jobs));
+      dispatch(setKeyword({}));
+    } catch (err) {
+      dispatch(setPostedJobs([]));
+    } 
+  }; */
+
+  const handleFilter = async (event) => {
+    event.preventDefault();
+    const keyword = {  keyword: event.currentTarget.keyword.value};
+    dispatch(setKeyword(keyword));
+    navigate("/jobs");
+  };
+
   return (
     <section className="w-full py-12 bg-gray-50">
       <div className="container mx-auto px-4 md:px-6">
@@ -29,11 +56,12 @@ export default function Home() {
             </p>
           </div>
           <div className="w-full max-w-sm space-y-2">
-            <form className="flex space-x-2">
+            <form className="flex space-x-2" onSubmit={handleFilter}>
               <input
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Search jobs..."
                 type="text"
+                name='keyword'
               />
               <button
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"

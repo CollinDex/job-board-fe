@@ -5,12 +5,20 @@ const jobsSlice = createSlice({
   name: 'jobs',
   initialState: {
     jobs: [],
+    postedJobs: [],
+    keyword: {},
     loading: false,
     error: null,
   },
   reducers: {
     setJobs: (state, action) => {
       state.jobs = action.payload;
+    },
+    setPostedJobs: (state, action) => {
+      state.postedJobs = action.payload;
+    },
+    setKeyword: (state, action) => {
+      state.keyword = action.payload;
     },
     setLoading: (state, action) => {
       state.loading = action.payload;
@@ -32,6 +40,6 @@ const jobsSlice = createSlice({
   },
 });
 
-export const { setJobs, setLoading, setError, updateJobInStore, deleteJobInStore } = jobsSlice.actions;
+export const { setJobs, setKeyword, setPostedJobs, setLoading, setError, updateJobInStore, deleteJobInStore } = jobsSlice.actions;
 
 export default jobsSlice.reducer;

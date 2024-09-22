@@ -1,80 +1,30 @@
 // src/pages/JobSearch.js
 import React, { useState, useEffect } from 'react';
-import { getJobs, searchJobs } from '../services/api';
+import { searchJobs } from '../services/api';
 import JobCard from '../components/JobCard';
 import SearchFilters from '../components/SearchFilters';
 import { toast } from 'react-toastify';
-
-const dummyJobs = [
-  {
-    id: 1,
-    title: "Software Engineer",
-    company: "Tech Innovations Inc.",
-    location: "San Francisco, CA",
-    min_salary: "10,000",
-    max_salary: "20,000"
-  },
-  {
-    id: 2,
-    title: "Frontend Developer",
-    company: "Creative Solutions",
-    location: "New York, NY",
-    min_salary: "10,000",
-    max_salary: "20,000"
-  },
-  {
-    id: 3,
-    title: "Data Analyst",
-    company: "DataCorp",
-    location: "Remote",
-    min_salary: "10,000",
-    max_salary: "20,000"
-  },
-  {
-    id: 4,
-    title: "UX/UI Designer",
-    company: "Design Studio",
-    location: "Los Angeles, CA",
-    min_salary: "10,000",
-    max_salary: "20,000"
-  },
-  {
-    id: 5,
-    title: "Backend Developer",
-    company: "Cloud Tech Ltd.",
-    location: "Austin, TX",
-    min_salary: "10,000",
-    max_salary: "20,000"
-  },
-  {
-    id: 6,
-    title: "Project Manager",
-    company: "Project Hub",
-    location: "Seattle, WA",
-    min_salary: "10,000",
-    max_salary: "20,000"
-  },
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { setKeyword, setPostedJobs } from '../store/jobsSlice';
 
 function JobSearch() {
-  const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({});
+  const keyword = useSelector((state) => state.jobs?.keyword);
+  const jobs = useSelector((state) => state.jobs?.postedJobs);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchJobs(filters);
+    fetchJobs(keyword);
   }, []);
 
   const fetchJobs = async (params) => {
-    setLoading(true);
     try {
       const response = await searchJobs(params);
-      setJobs(response.data.jobs);
+      dispatch(setPostedJobs(response.data.jobs));
+      dispatch(setKeyword({}));
     } catch (err) {
-      setError('Failed to fetch jobs');
-    } finally {
-      setLoading(false);
+      toast.error("No jobs applications at the moment");
+      dispatch(setPostedJobs([]));
     }
   };
 
@@ -82,7 +32,7 @@ function JobSearch() {
     const toastId = toast.loading('Processing job...');
     try {
       const response = await searchJobs(newFilters);
-      setJobs(response.data.jobs);
+      dispatch(setPostedJobs(response.data.jobs));
       toast.update(toastId, {
         render: 'Matching Jobs found',
         type: 'success',
@@ -96,12 +46,11 @@ function JobSearch() {
         isLoading: false,
         autoClose: 3000,
       });
-      setJobs([]);
+      dispatch(setPostedJobs([]));
     } 
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
 
   return (
     <div className="container mx-auto px-4 py-4">
