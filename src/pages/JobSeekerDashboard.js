@@ -266,6 +266,10 @@ function JobSeekerDashboard() {
               <p className="text-base font-normal text-gray-900">{profile?.profile_phone}</p>
             </div>
             <div className="mb-4">
+              <p className="text-sm font-semibold text-gray-600">Email:</p>
+              <p className="text-base font-normal text-gray-900">{user?.email}</p>
+            </div>
+            <div className="mb-4">
               <p className="text-sm font-semibold text-gray-600">Address:</p>
               <p className="text-base font-normal text-gray-900">{profile?.profile_address}</p>
             </div>
