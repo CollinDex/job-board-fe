@@ -15,81 +15,70 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const dummyApplications = [
   {
-    id: 1,
-    job: {
-      title: "Software Engineer",
-      company: "Tech Innovations Inc.",
-      location: "San Francisco, CA",
-      salary: "120,000",
-    },
-    status: "Interview Scheduled",
+    _id: '1',
+    title: 'Software Engineer',
+    company: 'Tech Innovations Inc.',
+    location: 'San Francisco, CA',
+    min_salary: 90000,
+    max_salary: 120000,
+    job_type: 'Full-time',
+    status: 'applied',
   },
   {
-    id: 2,
-    job: {
-      title: "Frontend Developer",
-      company: "Creative Solutions",
-      location: "New York, NY",
-      salary: "110,000",
-    },
-    status: "Application Submitted",
+    _id: '2',
+    title: 'UI/UX Designer',
+    company: 'Creative Solutions',
+    location: 'New York, NY',
+    min_salary: 70000,
+    max_salary: 95000,
+    job_type: 'Contract',
+    status: 'hired',
   },
   {
-    id: 3,
-    job: {
-      title: "Data Analyst",
-      company: "DataCorp",
-      location: "Remote",
-      salary: "95,000",
-    },
-    status: "Offer Received",
+    _id: '3',
+    title: 'Backend Developer',
+    company: 'DataCorp',
+    location: 'Remote',
+    min_salary: 80000,
+    max_salary: 100000,
+    job_type: 'Full-time',
+    status: 'rejected',
   },
   {
-    id: 4,
-    job: {
-      title: "UX/UI Designer",
-      company: "Design Studio",
-      location: "Los Angeles, CA",
-      salary: "105,000",
-    },
-    status: "Rejected",
+    _id: '4',
+    title: 'Project Manager',
+    company: 'Project Hub',
+    location: 'Seattle, WA',
+    min_salary: 85000,
+    max_salary: 110000,
+    job_type: 'Full-time',
+    status: 'interview',
   },
   {
-    id: 5,
-    job: {
-      title: "Backend Developer",
-      company: "Cloud Tech Ltd.",
-      location: "Austin, TX",
-      salary: "115,000",
-    },
-    status: "In Progress",
-  },
-  {
-    id: 6,
-    job: {
-      title: "Project Manager",
-      company: "Project Hub",
-      location: "Seattle, WA",
-      salary: "130,000",
-    },
-    status: "Application Under Review",
+    _id: '5',
+    title: 'Frontend Developer',
+    company: 'Design Studio',
+    location: 'Los Angeles, CA',
+    min_salary: 75000,
+    max_salary: 105000,
+    job_type: 'Part-time',
+    status: 'reviewed',
   },
 ];
+
 
 // Helper function to style the status
 const getStatusClass = (status) => {
   switch (status) {
-    case "Interview Scheduled":
+    case "applied":
       return "bg-blue-100 text-blue-800";
-    case "Application Submitted":
-      return "bg-yellow-100 text-yellow-800";
-    case "Offer Received":
+    case "hired":
       return "bg-green-100 text-green-800";
-    case "Rejected":
+    case "rejected":
       return "bg-red-100 text-red-800";
-    case "In Progress":
+    case "interview":
       return "bg-purple-100 text-purple-800";
-    case "Application Under Review":
+    case "reviewed":
       return "bg-orange-100 text-orange-800";
     default:
       return "bg-gray-100 text-gray-800";
@@ -304,18 +293,20 @@ function JobSeekerDashboard() {
         )}
       </section>
 
+      {/* JoB Application Section */}
       <div>
         <h3 className="text-2xl font-semibold mb-4">Your Applications</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {applications.map((application) => (
+          {dummyApplications.map((application) => (
             <div
-              key={application.id}
+              key={application._id}
               className="bg-white shadow-md rounded-lg p-6 transition-transform transform hover:scale-105 hover:shadow-lg"
             >
-              <h4 className="text-xl font-bold mb-2">{application.job.title}</h4>
-              <p className="text-gray-600 mb-2">{application.job.company}</p>
-              <p className="text-gray-500 mb-2">Location: {application.job.location}</p>
-              <p className="text-gray-500 mb-2">Salary: ${application.job.salary}</p>
+              <h4 className="text-xl font-bold mb-2">{application.title}</h4>
+              <p className="text-gray-600 mb-2">{application.company}</p>
+              <p className="text-gray-500 mb-2">Location: {application.location}</p>
+              <p className="text-gray-500 mb-2">Salary: ${application.min_salary} - {application.min_salary}</p>
+              <p className="text-gray-500 mb-2">Salary: ${application.job_type}</p>
               <span
                 className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusClass(
                   application.status

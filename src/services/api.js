@@ -157,9 +157,20 @@ export const searchJobs = async ({ jobType, location, keyword, status, min_salar
   }
 };
 
+export const applyForJob = async (applicationData) => {
+  try {
+    const res = await api.post('/jobs', applicationData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
 
 export const getJobDetails = (id) => api.get(`/jobs/${id}`);
-export const applyForJob = (jobId) => api.post(`/jobs/${jobId}/apply`);
 export const getEmployerJobs = () => api.get('/employer/jobs');
 export const getJobSeekerApplications = () => api.get('/jobseeker/applications');
 
