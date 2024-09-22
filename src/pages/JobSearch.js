@@ -1,8 +1,9 @@
 // src/pages/JobSearch.js
 import React, { useState, useEffect } from 'react';
-import { getJobs } from '../services/api';
+import { getJobs, searchJobs } from '../services/api';
 import JobCard from '../components/JobCard';
 import SearchFilters from '../components/SearchFilters';
+import { toast } from 'react-toastify';
 
 const dummyJobs = [
   {
@@ -10,42 +11,48 @@ const dummyJobs = [
     title: "Software Engineer",
     company: "Tech Innovations Inc.",
     location: "San Francisco, CA",
-    salary: "120,000",
+    min_salary: "10,000",
+    max_salary: "20,000"
   },
   {
     id: 2,
     title: "Frontend Developer",
     company: "Creative Solutions",
     location: "New York, NY",
-    salary: "110,000",
+    min_salary: "10,000",
+    max_salary: "20,000"
   },
   {
     id: 3,
     title: "Data Analyst",
     company: "DataCorp",
     location: "Remote",
-    salary: "95,000",
+    min_salary: "10,000",
+    max_salary: "20,000"
   },
   {
     id: 4,
     title: "UX/UI Designer",
     company: "Design Studio",
     location: "Los Angeles, CA",
-    salary: "105,000",
+    min_salary: "10,000",
+    max_salary: "20,000"
   },
   {
     id: 5,
     title: "Backend Developer",
     company: "Cloud Tech Ltd.",
     location: "Austin, TX",
-    salary: "115,000",
+    min_salary: "10,000",
+    max_salary: "20,000"
   },
   {
     id: 6,
     title: "Project Manager",
     company: "Project Hub",
     location: "Seattle, WA",
-    salary: "130,000",
+    min_salary: "10,000",
+    max_salary: "20,000"
   },
 ];
 
@@ -57,14 +64,13 @@ function JobSearch() {
 
   useEffect(() => {
     fetchJobs(filters);
-  }, [filters]);
+  }, []);
 
   const fetchJobs = async (params) => {
     setLoading(true);
     try {
-      //const response = await getJobs(params);
-      //setJobs(response.data);
-      setJobs(dummyJobs);
+      const response = await searchJobs(params);
+      setJobs(response.data.jobs);
     } catch (err) {
       setError('Failed to fetch jobs');
     } finally {
@@ -72,8 +78,26 @@ function JobSearch() {
     }
   };
 
-  const handleFilter = (newFilters) => {
-    setFilters(newFilters);
+  const handleFilter = async (newFilters) => {
+    const toastId = toast.loading('Processing job...');
+    try {
+      const response = await searchJobs(newFilters);
+      setJobs(response.data.jobs);
+      toast.update(toastId, {
+        render: 'Matching Jobs found',
+        type: 'success',
+        isLoading: false,
+        autoClose: 3000,
+      });
+    } catch (err) {
+      toast.update(toastId, {
+        render: 'Matching Job not Found',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
+      setJobs([]);
+    } 
   };
 
   if (loading) return <div>Loading...</div>;
@@ -85,7 +109,7 @@ function JobSearch() {
       <SearchFilters onFilter={handleFilter} />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {jobs.map((job) => (
-          <JobCard key={job.id} job={job} />
+          <JobCard key={job._id} job={job} />
         ))}
       </div>
     </div>

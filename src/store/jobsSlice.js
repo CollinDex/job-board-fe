@@ -25,9 +25,13 @@ const jobsSlice = createSlice({
         state.jobs[index] = updatedJob;
       }
     },
+    deleteJobInStore: (state, action) => {
+      const jobIdToDelete = action.payload;
+      state.jobs = state.jobs.filter((job) => job._id !== jobIdToDelete);
+    },
   },
 });
 
-export const { setJobs, setLoading, setError, updateJobInStore } = jobsSlice.actions;
+export const { setJobs, setLoading, setError, updateJobInStore, deleteJobInStore } = jobsSlice.actions;
 
 export default jobsSlice.reducer;

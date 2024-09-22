@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getEmployerJobs, deleteJob, createJob, getProfile, updateProfile, deleteProfile, postJob, getJobs, editJob } from '../services/api';
+import { getProfile, updateProfile, deleteProfile, postJob, getJobs, editJob, deleteJob } from '../services/api';
 import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -8,7 +8,7 @@ import { TextArea } from '../components/ui/TextArea';
 import { setProfile } from '../store/profileSlice';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { setJobListing, setJobs, updateJobInStore } from '../store/jobsSlice';
+import { deleteJobInStore, setJobs, updateJobInStore } from '../store/jobsSlice';
 
 const dummyJobs = [
   {
@@ -190,6 +190,7 @@ export default function EmployerDashboard() {
     const jobData = {
       title: event.currentTarget.title.value,
       description: event.currentTarget.description.value,
+      company: profile.profile_company,
       qualifications: event.currentTarget.qualifications.value.split(',').map((item) => item.trim()),
       responsibilities: event.currentTarget.responsibilities.value.split(',').map((item) => item.trim()),
       location: event.currentTarget.location.value,
@@ -205,7 +206,7 @@ export default function EmployerDashboard() {
     try {
       if (currentJob) {
         // Edit job if `currentJob` exists
-        await editJob(jobData);
+        const res = await editJob(jobData);
         toast.update(toastId, {
           render: 'Job updated successfully!',
           type: 'success',
@@ -213,7 +214,7 @@ export default function EmployerDashboard() {
           autoClose: 3000,
         });
         // Update jobs in Redux store
-        dispatch(updateJobInStore(jobData));
+        dispatch(updateJobInStore(res.data?.job));
       } else {
         // Post a new job
         const res = await postJob(jobData);
@@ -236,15 +237,25 @@ export default function EmployerDashboard() {
       });
     }
   };
-    
 
-
-  const fetchApplications = async () => {
+  const handleDeleteJob = async (job_id) => {
+    const toastId = toast.loading('Processing job...');
     try {
-      //const response = await getApplications();
-      setApplications([]);
+      await deleteJob(job_id);
+      toast.update(toastId, {
+        render: 'Job deleted successfully',
+        type: 'success',
+        isLoading: false,
+        autoClose: 3000,
+      });
+      dispatch(deleteJobInStore(job_id));
     } catch (err) {
-      setError('Failed to fetch applications');
+      toast.update(toastId, {
+        render: "Failed to delete job",
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   };
 
@@ -401,6 +412,7 @@ export default function EmployerDashboard() {
             className="border-b border-gray-200 py-4 last:border-b-0"
           >
             <h3 className="text-xl font-bold">{job.title}</h3>
+            <p className="text-gray-600">{job.company}</p>
             <p className="text-gray-600">{job.location}</p>
             <p className="text-gray-600">
               Min Salary: ${job.min_salary} - Max Salary: ${job.max_salary}
@@ -440,7 +452,7 @@ export default function EmployerDashboard() {
               </Button>
               <Button
                 variant="destructive"
-                /* onClick={() => handleDeleteJob(job.id)} */
+                onClick={() => handleDeleteJob(job._id)}
                 className="bg-red-500 text-white py-2 px-4 rounded-md shadow-lg hover:bg-red-600 transition duration-300 ease-in-out"
               >
                 Delete
@@ -522,7 +534,7 @@ export default function EmployerDashboard() {
           <Input
             name="job_type"
             defaultValue={currentJob?.job_type}
-            label="Job Type (e.g. Full-time, Part-time)"
+            label="Job Type (e.g. full-time, part-time, contract)"
             className="mb-4"
           />
           <div className="flex justify-end space-x-4">

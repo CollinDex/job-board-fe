@@ -3,11 +3,11 @@ import React, { useState } from 'react';
 function SearchFilters({ onFilter }) {
   const [jobType, setJobType] = useState('');
   const [location, setLocation] = useState('');
-  const [salaryRange, setSalaryRange] = useState('');
+  const [keyword, setKeyword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onFilter({ jobType, location, salaryRange });
+    onFilter({ jobType, location, keyword });
   };
 
   return (
@@ -35,16 +35,13 @@ function SearchFilters({ onFilter }) {
           />
         </div>
         <div className="w-full md:w-1/3 px-2">
-          <select
-            value={salaryRange}
-            onChange={(e) => setSalaryRange(e.target.value)}
-            className="w-full p-2 border rounded"
-          >
-            <option value="">All Salary Ranges</option>
-            <option value="0-50000">$0 - $50,000</option>
-            <option value="50000-100000">$50,000 - $100,000</option>
-            <option value="100000+">$100,000+</option>
-          </select>
+          <input
+              type="text"
+              placeholder="keyword"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
         </div>
       </div>
       <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">

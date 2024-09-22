@@ -84,6 +84,23 @@ export const deleteProfile = async () => {
   }
 };
 
+export const uploadResume = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('resume', file); // 'resume' should match the key expected by the backend
+
+    const response = await api.post('/profile/upload-resume', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 export const postJob = async (jobData) => {
   try {
     const res = await api.post('/job-listing', jobData);
@@ -111,46 +128,30 @@ export const editJob = async (jobData) => {
   }
 };
 
-export const deleteJob = async (jobId) => {
+export const deleteJob = async (job_id) => {
   try {
-    const res = await api.delete(`/jobs/${jobId}`);
+    const res = await api.delete('/job-listing', {
+      data: { job_id }
+    });
     return res.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-export const uploadResume = async (file) => {
+export const searchJobs = async ({ jobType, location, keyword, status, min_salary, max_salary }) => {
   try {
-    const formData = new FormData();
-    formData.append('resume', file); // 'resume' should match the key expected by the backend
+    let queryParams = new URLSearchParams();
 
-    const response = await api.post('/profile/upload-resume', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    if (jobType) queryParams.append('job_type', jobType);
+    if (location) queryParams.append('location', location);
+    if (keyword) queryParams.append('keyword', keyword);
+    if (status) queryParams.append('status', status);
+    if (min_salary) queryParams.append('min_salary', min_salary);
+    if (max_salary) queryParams.append('max_salary', max_salary);
 
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
-};
-
-
-export const getJobById = async (id) => {
-  try {
-    const response = await api.get(`/jobs/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
-};
-
-export const createJob = async (payload) => {
-  try {
-    const response = await api.post('/jobs', payload);
-    return response.data;
+    const res = await api.get(`/search?${queryParams.toString()}`);
+    return res.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
