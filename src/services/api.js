@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = 'https://job-board-api-production.up.railway.app/api/v1/';
+//const API_BASE_URL = 'http://localhost:8000/api/v1/';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -91,6 +92,24 @@ export const getJobs = async () => {
     throw error.response?.data || error.message;
   }
 };
+
+export const uploadResume = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('resume', file); // 'resume' should match the key expected by the backend
+
+    const response = await api.post('/profile/upload-resume', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 
 export const getJobById = async (id) => {
   try {

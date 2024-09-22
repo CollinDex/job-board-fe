@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { setProfile } from '../store/profileSlice';
-import { deleteProfile, getProfile, updateProfile } from '../services/api';
+import { deleteProfile, getProfile, updateProfile, uploadResume } from '../services/api';
 import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { TextArea } from '../components/ui/TextArea';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+
 
 
 const dummyApplications = [
@@ -100,6 +103,8 @@ function JobSeekerDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteProfileModalOpen, setIsDeleteProfileModalOpen] = useState(false);
   const [profileEdit, setProfileEdit] = useState(false);
+  const [selectedResume, setSelectedResume] = useState(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const profile = useSelector((state) => state.profile?.profile);
   const dispatch = useDispatch();
@@ -165,6 +170,34 @@ function JobSeekerDashboard() {
       toast.error("Failed to delete profile");
     }
   };
+
+  const handleResumeUpload = async (event) => {
+    event.preventDefault();
+    try {
+      // Start the loading toast before upload
+      const toastId = toast.loading('Uploading resume...');
+  
+      // Upload the resume and get the updated profile in response
+      const res = await uploadResume(selectedResume);
+  
+      // Dispatch the updated profile to the Redux store
+      dispatch(setProfile(res.data?.profile));
+  
+      // Update the loading toast with a success message
+      toast.update(toastId, {
+        render: 'Resume uploaded successfully!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 3000,
+      });
+  
+      // Close the modal after successful upload
+      setIsUploadModalOpen(false);
+    } catch (error) {
+      // Display an error message if the upload fails
+      toast.error('Failed to upload resume');
+    }
+  };  
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -236,6 +269,19 @@ function JobSeekerDashboard() {
               <p className="text-sm font-semibold text-gray-600">Address:</p>
               <p className="text-base font-normal text-gray-900">{profile?.profile_address}</p>
             </div>
+            <div className="mb-4 flex items-center">
+              <p className="text-sm font-semibold text-gray-600">Resume:</p>
+              <a href={profile?.profile_resume} target="_blank" rel="noopener noreferrer"
+                className="text-base font-normal text-blue-500 hover:underline ml-2">
+                View Resume
+              </a>
+              <Button
+                onClick={() => setIsUploadModalOpen(true)}
+                className="bg-green-500 text-white py-1 px-2 ml-1 rounded-md hover:bg-green-600"
+                style={{ padding: '4px 8px', fontSize: '12px' }}>
+                <FontAwesomeIcon icon={faPlus} />
+              </Button>
+            </div>
             <div className="flex space-x-4">
               <Button
                 onClick={() => setProfileEdit(true)}
@@ -297,6 +343,36 @@ function JobSeekerDashboard() {
             Delete
           </button>
         </div>
+      </Modal>
+
+      {/* Modal for uploading resume */}
+      <Modal isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} title="Upload Resume">
+        <form onSubmit={handleResumeUpload}>
+          <Input
+            type="file"
+            name="resume"
+            accept=".pdf,.doc,.docx"
+            onChange={(e) => setSelectedResume(e.target.files[0])}
+            required
+            label="Select Resume"
+            className="mb-4"
+          />
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            >
+              Upload
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setIsUploadModalOpen(false)}
+              className="ml-2 bg-red-500 text-gray-700 border border-gray-300 py-2 px-4 rounded-md hover:bg-gray-200"
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
