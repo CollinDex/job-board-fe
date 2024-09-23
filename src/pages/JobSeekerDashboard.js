@@ -3,68 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { setProfile } from '../store/profileSlice';
-import { deleteProfile, getProfile, updateProfile, uploadResume } from '../services/api';
+import { deleteProfile, getAppliedJobs, getProfile, updateProfile, uploadResume } from '../services/api';
 import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { TextArea } from '../components/ui/TextArea';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-
-
-
-const dummyApplications = [
-  {
-    _id: '1',
-    title: 'Software Engineer',
-    company: 'Tech Innovations Inc.',
-    location: 'San Francisco, CA',
-    min_salary: 90000,
-    max_salary: 120000,
-    job_type: 'Full-time',
-    status: 'applied',
-  },
-  {
-    _id: '2',
-    title: 'UI/UX Designer',
-    company: 'Creative Solutions',
-    location: 'New York, NY',
-    min_salary: 70000,
-    max_salary: 95000,
-    job_type: 'Contract',
-    status: 'hired',
-  },
-  {
-    _id: '3',
-    title: 'Backend Developer',
-    company: 'DataCorp',
-    location: 'Remote',
-    min_salary: 80000,
-    max_salary: 100000,
-    job_type: 'Full-time',
-    status: 'rejected',
-  },
-  {
-    _id: '4',
-    title: 'Project Manager',
-    company: 'Project Hub',
-    location: 'Seattle, WA',
-    min_salary: 85000,
-    max_salary: 110000,
-    job_type: 'Full-time',
-    status: 'interview',
-  },
-  {
-    _id: '5',
-    title: 'Frontend Developer',
-    company: 'Design Studio',
-    location: 'Los Angeles, CA',
-    min_salary: 75000,
-    max_salary: 105000,
-    job_type: 'Part-time',
-    status: 'reviewed',
-  },
-];
+import { setAppliedJobs } from '../store/jobsSlice';
 
 
 // Helper function to style the status
@@ -86,22 +31,25 @@ const getStatusClass = (status) => {
 };
 
 function JobSeekerDashboard() {
-  const [applications, setApplications] = useState(dummyApplications); // Use the dummy data
+  //const [applications, setApplications] = useState(dummyApplications); // Use the dummy data
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteProfileModalOpen, setIsDeleteProfileModalOpen] = useState(false);
   const [profileEdit, setProfileEdit] = useState(false);
   const [selectedResume, setSelectedResume] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const user = useSelector((state) => state.auth.user);
-  const profile = useSelector((state) => state.profile?.profile);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const user = useSelector((state) => state.auth.user);
+  const profile = useSelector((state) => state.profile?.profile);
+  const appliedJobs = useSelector((state) => state.jobs?.appliedJobs);
 
   useEffect(() => {
     fetchDashboardData();
     fetchApplications();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboardData = async () => {
@@ -191,7 +139,9 @@ function JobSeekerDashboard() {
   const fetchApplications = async () => {
     setLoading(true);
     try {
-      setApplications(dummyApplications);
+      const res = await getAppliedJobs();
+      console.log(res.data?.applications);
+      dispatch(setAppliedJobs(res.data?.applications));
     } catch (err) {
       setError('Failed to fetch applications');
     } finally {
@@ -297,22 +247,22 @@ function JobSeekerDashboard() {
       <div>
         <h3 className="text-2xl font-semibold mb-4">Your Applications</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {dummyApplications.map((application) => (
+          {appliedJobs.map((application) => (
             <div
-              key={application._id}
+              key={application.job._id}
               className="bg-white shadow-md rounded-lg p-6 transition-transform transform hover:scale-105 hover:shadow-lg"
             >
-              <h4 className="text-xl font-bold mb-2">{application.title}</h4>
-              <p className="text-gray-600 mb-2">{application.company}</p>
-              <p className="text-gray-500 mb-2">Location: {application.location}</p>
-              <p className="text-gray-500 mb-2">Salary: ${application.min_salary} - {application.min_salary}</p>
-              <p className="text-gray-500 mb-2">Salary: ${application.job_type}</p>
+              <h4 className="text-xl font-bold mb-2">{application.job.title}</h4>
+              <p className="text-gray-600 mb-2">{application.job.company}</p>
+              <p className="text-gray-500 mb-2">Location: {application.job.location}</p>
+              <p className="text-gray-500 mb-2">Salary: ${application.job.min_salary} - {application.job.min_salary}</p>
+              <p className="text-gray-500 mb-2">Salary: ${application.job.job_type}</p>
               <span
                 className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusClass(
-                  application.status
+                  application.application_status
                 )}`}
               >
-                Status: {application.status}
+                Status: {application.application_status}
               </span>
             </div>
           ))}
