@@ -170,8 +170,17 @@ export const applyForJob = async (applicationData) => {
   }
 };
 
+export const getAppliedJobs = async () => {
+  try {
+    const res = await api.get('/jobs/applied');
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+
 export const getJobDetails = (id) => api.get(`/jobs/${id}`);
 export const getEmployerJobs = () => api.get('/employer/jobs');
-export const getJobSeekerApplications = () => api.get('/jobseeker/applications');
 
 export default api;

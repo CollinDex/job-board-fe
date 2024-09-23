@@ -29,7 +29,7 @@ function JobSearch() {
   };
 
   const handleFilter = async (newFilters) => {
-    const toastId = toast.loading('Processing job...');
+    const toastId = toast.loading('Searching jobs...');
     try {
       const response = await searchJobs(newFilters);
       dispatch(setPostedJobs(response.data.jobs));

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 function JobCard({ job }) {
     return (
-      <div className="bg-white shadow-md rounded-lg p-4 mb-4">
+      <div className="bg-white shadow-md rounded-lg p-4 mb-4 transition-transform transform hover:scale-105 hover:shadow-lg">
         <h2 className="text-xl font-bold mb-2">{job.title}</h2>
         <p className="text-gray-600 mb-2">{job.company}</p>
         <div className="flex flex-col sm:flex-row sm:justify-between">

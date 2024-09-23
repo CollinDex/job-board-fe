@@ -341,6 +341,10 @@ export default function EmployerDashboard() {
                 </li>
               ))}
             </ul>
+            <div>
+            <h4 className="text-lg font-semibold">Applicants</h4>
+            <p className="text-gray-600 mb-2">{job.applications?.length}</p>
+            </div>
             <div className="flex space-x-4">
               <Button
                 variant="outline"
