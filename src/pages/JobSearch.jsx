@@ -16,6 +16,7 @@ function JobSearch() {
 
   useEffect(() => {
     fetchJobs(keyword);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchJobs = async (params) => {

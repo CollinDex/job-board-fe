@@ -141,7 +141,6 @@ function JobSeekerDashboard() {
     setLoading(true);
     try {
       const res = await getAppliedJobs();
-      console.log(res.data?.applications);
       dispatch(setAppliedJobs(res.data?.applications));
     } catch (err) {
       setError('Failed to fetch applications');

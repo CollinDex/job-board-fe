@@ -179,8 +179,26 @@ export const getAppliedJobs = async () => {
   }
 };
 
+export const getJobApplications = async (job_id) => {
+  try {
+    const res = await api.get(`/jobs/${job_id}`);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
 
-export const getJobDetails = (id) => api.get(`/jobs/${id}`);
-export const getEmployerJobs = () => api.get('/employer/jobs');
+export const updateApplicationStatus = async (applicationId, statusData) => {
+  try {
+    const data = {
+      application_id : applicationId,
+      status: statusData
+    };
+    const res = await api.put('/jobs/status', data);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
 
 export default api;

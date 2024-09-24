@@ -7,13 +7,12 @@ import { Input } from '../components/ui/Input';
 import { TextArea } from '../components/ui/TextArea';
 import { setProfile } from '../store/profileSlice';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { deleteJobInStore, setJobs, updateJobInStore } from '../store/jobsSlice';
 import LoadingPage from '../components/ui/Loading';
 import ErrorPage from '../components/ui/Error';
 
 export default function EmployerDashboard() {
-  const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +27,7 @@ export default function EmployerDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboardData = async () => {
@@ -343,9 +343,16 @@ export default function EmployerDashboard() {
                 </li>
               ))}
             </ul>
-            <div>
-            <h4 className="text-lg font-semibold">Applicants</h4>
-            <p className="text-gray-600 mb-2">{job.applications?.length}</p>
+            <div className='mb-6'>
+            <h4 className="text-lg font-semibold">Applicants: {job.applications?.length}</h4>
+            <Link to={`/employer-dashboard/applications/${job._id}`}>
+              <Button
+                variant="outline"
+                className="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-300 ease-in-out"
+              >
+                Mannage Applications
+              </Button>
+            </Link>
             </div>
             <div className="flex space-x-4">
               <Button
@@ -356,34 +363,19 @@ export default function EmployerDashboard() {
                 }}
                 className="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-300 ease-in-out"
               >
-                Edit
+                Edit Job
               </Button>
               <Button
                 variant="destructive"
                 onClick={() => handleDeleteJob(job._id)}
                 className="bg-red-500 text-white py-2 px-4 rounded-md shadow-lg hover:bg-red-600 transition duration-300 ease-in-out"
               >
-                Delete
+                Delete Job
               </Button>
             </div>
           </div>
         ))}
       </section>
-
-      {/* Applications Section */}
-
-      {/* <section className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-semibold mb-4">Applications</h2>
-        {applications.map((application) => (
-          <div key={application.id} className="border-b border-gray-200 py-4 last:border-b-0">
-            <h3 className="text-xl font-bold">{application.job.title}</h3>
-            <p><strong>Applicant:</strong> {application.applicant.name}</p>
-            <p><strong>Email:</strong> {application.applicant.email}</p>
-            <p><strong>Status:</strong> {application.status}</p>
-          </div>
-        ))}
-      </section> 
-      */}
 
       {/* Job Post/Edit Modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

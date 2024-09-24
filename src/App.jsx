@@ -13,6 +13,7 @@ import CreateProfile from './pages/Profile';
 import Auth from './pages/Auth';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Applications from './pages/Applications';
 
 function PrivateRoute({ children }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -41,6 +42,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/jobs" element={<JobSearch />} />
             <Route path="/job/:id" element={<JobDetails />} />
+            <Route path="/employer-dashboard/applications/:id" element={<Applications/>} />
             <Route 
               path="/employer-dashboard" 
               element={
