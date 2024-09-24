@@ -6,6 +6,7 @@ import SearchFilters from '../components/SearchFilters';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { setKeyword, setPostedJobs } from '../store/jobsSlice';
+import LoadingPage from '../components/ui/Loading';
 
 function JobSearch() {
   const [loading, setLoading] = useState(false);
@@ -18,6 +19,7 @@ function JobSearch() {
   }, []);
 
   const fetchJobs = async (params) => {
+    setLoading(true);
     try {
       const response = await searchJobs(params);
       dispatch(setPostedJobs(response.data.jobs));
@@ -25,6 +27,8 @@ function JobSearch() {
     } catch (err) {
       toast.error("No jobs applications at the moment");
       dispatch(setPostedJobs([]));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,7 +54,7 @@ function JobSearch() {
     } 
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingPage/>;
 
   return (
     <div className="container mx-auto px-4 py-4">

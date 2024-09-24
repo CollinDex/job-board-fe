@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { getJobs } from '../services/api';
 import JobCard from '../components/JobCard';
 import SearchFilters from '../components/SearchFilters';
+import LoadingPage from './ui/Loading';
+import ErrorPage from './ui/Error';
 
 function JobSearch() {
   //const [jobs, setJobs] = useState([]);
@@ -29,8 +31,8 @@ function JobSearch() {
     setFilters(newFilters);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <LoadingPage/>;
+  if (error) return <ErrorPage/>;
 
   const jobs = [];
 

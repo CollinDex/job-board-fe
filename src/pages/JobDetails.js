@@ -7,6 +7,8 @@ import { Button } from '../components/ui/Button';  // assuming Button is already
 import { Input } from '../components/ui/Input';    // assuming Input is already a component
 import { TextArea } from '../components/ui/TextArea';
 import { toast } from 'react-toastify';
+import LoadingPage from '../components/ui/Loading';
+import ErrorPage from '../components/ui/Error';
 
 function JobDetails() {
   const { id } = useParams();
@@ -73,9 +75,9 @@ function JobDetails() {
     setSelectedResume(e.target.files[0]);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-  if (!job) return <div>Job not found</div>;
+  if (loading) return <LoadingPage/>;
+  if (error) return <ErrorPage/>;
+  if (!job) return <ErrorPage/>
 
   return (
     <div className="container mx-auto px-4 py-8">

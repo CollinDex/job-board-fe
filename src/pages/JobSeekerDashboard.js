@@ -257,7 +257,7 @@ function JobSeekerDashboard() {
               <p className="text-gray-600 mb-2">{application.job.company}</p>
               <p className="text-gray-500 mb-2">Location: {application.job.location}</p>
               <p className="text-gray-500 mb-2">Salary: ${application.job.min_salary} - {application.job.min_salary}</p>
-              <p className="text-gray-500 mb-2">Salary: ${application.job.job_type}</p>
+              <p className="text-gray-500 mb-2">Job Type: {application.job.job_type}</p>
               <span
                 className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusClass(
                   application.application_status

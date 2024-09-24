@@ -9,6 +9,8 @@ import { setProfile } from '../store/profileSlice';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { deleteJobInStore, setJobs, updateJobInStore } from '../store/jobsSlice';
+import LoadingPage from '../components/ui/Loading';
+import ErrorPage from '../components/ui/Error';
 
 export default function EmployerDashboard() {
   const [applications, setApplications] = useState([]);
@@ -161,8 +163,8 @@ export default function EmployerDashboard() {
     }
   };
 
-  if (loading) return <div className="text-center mt-8">Loading...</div>;
-  if (error) return <div className="text-center mt-8 text-red-500">{error}</div>;
+  if (loading) return <LoadingPage/>;
+  if (error) return <ErrorPage/>;
 
   return (
     <div className="container mx-auto px-4 py-8">
