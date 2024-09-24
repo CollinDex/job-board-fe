@@ -10,6 +10,8 @@ import { Input } from '../components/ui/Input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { setAppliedJobs } from '../store/jobsSlice';
+import LoadingPage from '../components/ui/Loading';
+import ErrorPage from '../components/ui/Error';
 
 
 // Helper function to style the status
@@ -31,7 +33,6 @@ const getStatusClass = (status) => {
 };
 
 function JobSeekerDashboard() {
-  //const [applications, setApplications] = useState(dummyApplications); // Use the dummy data
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isDeleteProfileModalOpen, setIsDeleteProfileModalOpen] = useState(false);
@@ -149,8 +150,8 @@ function JobSeekerDashboard() {
     }
   };
 
-  if (loading) return <div className="text-center mt-8">Loading...</div>;
-  if (error) return <div className="text-center mt-8 text-red-500">{error}</div>;
+  if (loading) return <LoadingPage/>;
+  if (error) return <ErrorPage/>;
 
   return (
     <div className="container mx-auto px-4 py-8">
