@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Briefcase } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setKeyword, setPostedJobs } from '../store/jobsSlice';
+import { setKeyword } from '../store/jobsSlice';
 //import { searchJobs } from '../services/api';
 
 export default function Home() {
@@ -11,6 +11,10 @@ export default function Home() {
   //const keyword = useSelector((state) => state.jobs?.keyword);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect (() => {
+    window.scrollTo(0,0);
+  }, []);
 
   let dashboard;
 

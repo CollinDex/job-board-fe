@@ -28,6 +28,10 @@ function JobDetails() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  useEffect (() => {
+    window.scrollTo(0,0);
+  }, []);
+
   const fetchJobDetails = (id) => {
     try {
       const job = jobs.filter((job) => job._id === id);

@@ -19,6 +19,10 @@ function JobSearch() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect (() => {
+    window.scrollTo(0,0);
+  }, []);
+
   const fetchJobs = async (params) => {
     setLoading(true);
     try {

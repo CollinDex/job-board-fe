@@ -53,6 +53,10 @@ function JobSeekerDashboard() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect (() => {
+    window.scrollTo(0,0);
+  }, []);
+
   const fetchDashboardData = async () => {
     setLoading(true);
     try {

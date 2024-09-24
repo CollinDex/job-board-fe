@@ -21,6 +21,10 @@ function Applications() {
     fetchApplications(id);
   }, [id]);
 
+  useEffect (() => {
+    window.scrollTo(0,0);
+  }, []);
+
   const fetchApplications = async (jobId) => {
     try {
       const res = await getJobApplications(jobId);

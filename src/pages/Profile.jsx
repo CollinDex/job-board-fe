@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../components/ui/Modal';
 import useAuthRedirect from '../services/authRedirect';
@@ -16,6 +16,10 @@ export default function CreateProfile() {
   const userRole = useSelector((state) => state.auth.user.role); // User role from Redux store
 
   useAuthRedirect(); //For protected Routes
+
+  useEffect (() => {
+    window.scrollTo(0,0);
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();

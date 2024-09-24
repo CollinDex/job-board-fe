@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login, register } from '../services/api';
@@ -22,6 +22,10 @@ export default function Auth() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect (() => {
+    window.scrollTo(0,0);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
