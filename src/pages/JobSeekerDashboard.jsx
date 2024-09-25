@@ -50,8 +50,8 @@ function JobSeekerDashboard() {
   useEffect(() => {
     if (!profile || !appliedJobs) {
       fetchDashboardData();
-      fetchApplications();
     }
+    fetchApplications();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, appliedJobs]);
 
@@ -144,14 +144,14 @@ function JobSeekerDashboard() {
   };  
 
   const fetchApplications = async () => {
-    setLoading(true);
+    //setLoading(true);
     try {
       const res = await getAppliedJobs();
       dispatch(setAppliedJobs(res.data?.applications));
     } catch (err) {
       setError('Failed to fetch applications');
     } finally {
-      setLoading(false);
+      //setLoading(false);
     }
   };
 
