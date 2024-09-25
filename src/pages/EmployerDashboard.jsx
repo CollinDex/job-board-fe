@@ -26,9 +26,11 @@ export default function EmployerDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchDashboardData();
+    if (!profile || !jobs) {
+      fetchDashboardData();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [profile, jobs]);
 
   useEffect (() => {
     window.scrollTo(0,0);
@@ -351,12 +353,24 @@ export default function EmployerDashboard() {
             <div className='mb-6'>
             <h4 className="text-lg font-semibold">Applicants: {job.applications?.length}</h4>
             <Link to={`/employer-dashboard/applications/${job._id}`}>
-              <Button
+            {
+              job.applications?.length < 1 ? (
+                <Button
+                disabled
                 variant="outline"
-                className="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-300 ease-in-out"
+                className={`bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-300 ease-in-out cursor-not-allowed`}
               >
                 Mannage Applications
               </Button>
+              ) : (
+                <Button
+                variant="outline"
+                className={`bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-300 ease-in-out`}
+              >
+                Mannage Applications
+              </Button>
+              )
+            }
             </Link>
             </div>
             <div className="flex space-x-4">

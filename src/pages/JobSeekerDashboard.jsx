@@ -48,10 +48,12 @@ function JobSeekerDashboard() {
   const appliedJobs = useSelector((state) => state.jobs?.appliedJobs);
 
   useEffect(() => {
-    fetchDashboardData();
-    fetchApplications();
+    if (!profile || !appliedJobs) {
+      fetchDashboardData();
+      fetchApplications();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [profile, appliedJobs]);
 
   useEffect (() => {
     window.scrollTo(0,0);
@@ -254,7 +256,7 @@ function JobSeekerDashboard() {
           {appliedJobs.map((application) => (
             <div
               key={application.job._id}
-              className="bg-white shadow-md rounded-lg p-6 transition-transform transform hover:scale-105 hover:shadow-lg"
+              className="bg-white shadow-md rounded-lg p-6 transition-transform transform hover:scale-105 hover:shadow-lg hover:cursor-pointer"
             >
               <h4 className="text-xl font-bold mb-2">{application.job.title}</h4>
               <p className="text-gray-600 mb-2">{application.job.company}</p>

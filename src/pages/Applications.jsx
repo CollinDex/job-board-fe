@@ -71,13 +71,13 @@ function Applications() {
 
   if (loading) return <LoadingPage />;
   if (error) return <ErrorPage />;
-  if (applications.length === 0) return <div>No applications found</div>;
+  if (applications.length === 0) return <ErrorPage />;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center">{title} Applications</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {applications.map((application) => (
           <div
             key={application._id}
